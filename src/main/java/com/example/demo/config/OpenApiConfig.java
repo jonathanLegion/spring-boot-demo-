@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI demoOpenAPI() {
+    public OpenAPI demoOpenAPI() { //this class is only for documentation purposes, it doesn't affect the actual security configuration of the API, which is handled separately in the SecurityConfig class. The OpenApiConfig class is responsible for configuring how the API is documented and presented in Swagger UI, while the SecurityConfig class is responsible for enforcing security rules on the API endpoints.
 
         final String securitySchemeName = "bearerAuth";
 
