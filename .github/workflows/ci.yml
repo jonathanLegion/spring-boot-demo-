@@ -1,15 +1,20 @@
-name: CI
+
+name: CI / CD Demo Pipeline
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - develop
+      - main
+    tags:
+      - "v*"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: dev   # 🔗 links to DEV environment
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,8 +25,57 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Make mvnw executable
-        run: chmod +x mvnw
+      - name: Build & test
+        run: mvn clean test
 
-      - name: Build with Maven Wrapper
-        run: ./mvnw clean package
+      - name: Deploy to DEV (simulated)
+        run: |
+          echo "Deploying to DEV"
+          echo "ENV_NAME=${{ secrets.ENV_NAME }}"
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
+
+  deploy-qa:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: qa    # 🔗 links to QA environment
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build & test
+        run: mvn clean test
+
+      - name: Deploy to QA (simulated)
+        run: |
+          echo "Deploying to QA"
+          echo "ENV_NAME=${{ secrets.ENV_NAME }}"
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
+
+  deploy-prod:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment: prod  # 🔗 links to PROD environment (approval required)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build & test
+        run: mvn clean test
+
+      - name: Deploy to PROD (simulated)
+        run: |
+          echo "Deploying to PROD"
+          echo "ENV_NAME=${{ secrets.ENV_NAME }}"
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
