@@ -7,6 +7,7 @@ WORKDIR /app
 # 3. Copy everything from repo into container
 COPY . .
 
+RUN chmod +x mvnw
 # 4. Build the application using Maven Wrapper
 RUN ./mvnw clean package
 
